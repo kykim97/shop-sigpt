@@ -76,10 +76,7 @@ public class UpdateInventoryTest {
                 .build();
             try {
                 boolean sendStatus = processor.inboundTopic().send(newMessage);
-                if (!sendStatus) {
-                    LOGGER.error("Message sending failed");
-                    return;
-                }
+                assert (sendStatus == true);
             } catch (Exception e) {
                 LOGGER.error("Messaging Exception: ", e);
                 throw e;
