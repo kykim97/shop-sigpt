@@ -28,13 +28,20 @@ public class PolicyHandler {
     public void wheneverOrderPlaced_UpdateInventory(
         @Payload OrderPlaced orderPlaced
     ) {
-        OrderPlaced event = orderPlaced;
-        System.out.println(
-            "\n\n##### listener UpdateInventory : " + orderPlaced + "\n\n"
-        );
+        try {
+            OrderPlaced event = orderPlaced;
+            System.out.println(
+                "\n\n##### listener UpdateInventory : " + orderPlaced + "\n\n"
+            );
 
-        // Sample Logic //
-        Inventory inventory = Inventory.updateInventory(event);
-        Assert.isTrue(inventory != null, "Inventory must exist");
+            // Sample Logic //
+            Inventory inventory = Inventory.updateInventory(event);
+            Assert.isTrue(inventory != null, "Inventory must exist");
+        } catch (Exception e) {
+            // exception handling
+            System.out.println(
+                "Error occurred while processing inventory update."
+            );
+        }
     }
 }
