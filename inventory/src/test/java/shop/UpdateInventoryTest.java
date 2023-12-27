@@ -49,6 +49,7 @@ public class UpdateInventoryTest {
         //given:
         Inventory entity = new Inventory();
 
+        InventoryApplication.applicationContext = applicationContext;
         entity.setProductId(123L);
         entity.setStockRemain(50);
 
@@ -60,8 +61,6 @@ public class UpdateInventoryTest {
 
         event.setProductId(123L);
         event.setQty(10);
-
-        InventoryApplication.applicationContext = applicationContext;
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
