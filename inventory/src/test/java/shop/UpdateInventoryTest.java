@@ -1,10 +1,11 @@
-
 package shop;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,10 +20,6 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.MimeTypeUtils;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import shop.config.kafka.KafkaProcessor;
 import shop.domain.*;
 
@@ -30,75 +27,79 @@ import shop.domain.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UpdateInventoryTest {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(EventTest.class);
-   
-   @Autowired
-   private KafkaProcessor processor;
-   @Autowired
-   private MessageCollector messageCollector;
-   @Autowired
-   private ApplicationContext applicationContext;
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+        EventTest.class
+    );
 
-   @Autowired
-   public InventoryRepository repository;
+    @Autowired
+    private KafkaProcessor processor;
 
-   @Test
-   @SuppressWarnings("unchecked")
-   public void test0() {
+    @Autowired
+    private MessageCollector messageCollector;
 
-      //given:  
-      Inventory entity = new Inventory();
+    @Autowired
+    private ApplicationContext applicationContext;
 
-      entity.setProductId(123L);
-      entity.setStockRemain(50L);
+    @Autowired
+    public InventoryRepository repository;
 
-      repository.save(entity);
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test0() {
+        //given:
+        Inventory entity = new Inventory();
 
-      //when:  
-      
-      OrderPlaced event = new OrderPlaced();
+        entity.setProductId(123L);
+        entity.setStockRemain(50L);
 
-      event.setProductId(123L);
-      event.setQty(10L);
-      
-      InventoryApplication.applicationContext = applicationContext;
+        repository.save(entity);
 
-      ObjectMapper objectMapper = new ObjectMapper();
-      try {
-         String msg = objectMapper.writeValueAsString(event);
+        //when:
 
-         processor.inboundTopic().send(
-            MessageBuilder
-            .withPayload(msg)
-            .setHeader(
-               MessageHeaders.CONTENT_TYPE,
-               MimeTypeUtils.APPLICATION_JSON
-            )
-            .setHeader("type", event.getEventType())
-            .build()
-         );
+        OrderPlaced event = new OrderPlaced();
 
-         //then:
+        event.setProductId(123L);
+        event.setQty(10L);
 
-         Message<String> received = (Message<String>) messageCollector.forChannel(processor.outboundTopic()).poll();
+        InventoryApplication.applicationContext = applicationContext;
 
-         assertNotNull("Resulted event must be published", received);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String msg = objectMapper.writeValueAsString(event);
 
-         InventoryUpdated outputEvent = objectMapper.readValue(received.getPayload(), InventoryUpdated.class);
+            processor
+                .inboundTopic()
+                .send(
+                    MessageBuilder
+                        .withPayload(msg)
+                        .setHeader(
+                            MessageHeaders.CONTENT_TYPE,
+                            MimeTypeUtils.APPLICATION_JSON
+                        )
+                        .setHeader("type", event.getEventType())
+                        .build()
+                );
 
+            //then:
 
-         LOGGER.info("Response received: {}", received.getPayload());
+            Message<String> received = (Message<String>) messageCollector
+                .forChannel(processor.outboundTopic())
+                .poll();
 
-         assertEquals(outputEvent.getProductId(), 123L);
-         assertEquals(outputEvent.getStockRemain(), 40L);
+            assertNotNull("Resulted event must be published", received);
 
+            InventoryUpdated outputEvent = objectMapper.readValue(
+                received.getPayload(),
+                InventoryUpdated.class
+            );
 
-      } catch (JsonProcessingException e) {
-         // TODO Auto-generated catch block
-         assertTrue("exception", false);
-      }
+            LOGGER.info("Response received: {}", received.getPayload());
 
-     
-   }
-
+            assertEquals(outputEvent.getProductId(), 123L);
+            assertEquals(outputEvent.getStockRemain(), 40L);
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            assertTrue("exception", false);
+        }
+    }
 }
