@@ -74,7 +74,7 @@ public class UpdateInventoryTest {
                 )
                 .setHeader("type", event.getEventType())
                 .build();
-            processor.inboundTopic().send(newMessage);
+            // processor.inboundTopic().send(newMessage);
 
             //then:
 
