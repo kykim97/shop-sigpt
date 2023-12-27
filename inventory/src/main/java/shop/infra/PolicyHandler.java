@@ -37,6 +37,8 @@ public class PolicyHandler {
             // Sample Logic //
             Inventory inventory = Inventory.updateInventory(event);
             Assert.isTrue(inventory != null, "Inventory must exist");
+            InventoryUpdated inventoryUpdated = new InventoryUpdated(inventory);
+            inventoryUpdated.publishAfterCommit();
         } catch (Exception e) {
             // exception handling
             System.out.println(
