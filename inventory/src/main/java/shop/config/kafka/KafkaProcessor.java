@@ -13,7 +13,5 @@ public interface KafkaProcessor {
     SubscribableChannel inboundTopic();
 
     @Output(OUTPUT)
-    MessageChannel outboundTopic() {
-        return new DirectChannel();
-    }
+    MessageChannel outboundTopic();
 }
