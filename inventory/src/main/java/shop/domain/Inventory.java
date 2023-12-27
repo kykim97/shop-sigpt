@@ -47,6 +47,11 @@ public class Inventory {
             ) -
             orderPlaced.getQty()
         );
+
+        if (inventory.getStockRemain() < 0) {
+            inventory.setStockRemain(0);
+        }
+
         repository().save(inventory);
 
         InventoryUpdated inventoryUpdated = new InventoryUpdated(inventory);
