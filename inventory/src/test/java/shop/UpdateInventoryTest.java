@@ -74,10 +74,15 @@ public class UpdateInventoryTest {
                 )
                 .setHeader("type", event.getEventType())
                 .build();
-            boolean sendStatus = processor.inboundTopic().send(newMessage);
-            if (!sendStatus) throw new RuntimeException(
-                "Failed to send message"
-            );
+            try {
+                boolean sendStatus = processor.inboundTopic().send(newMessage);
+                if (!sendStatus) throw new RuntimeException(
+                    "Message sending failed"
+                );
+            } catch (Exception e) {
+                LOGGER.error("Messaging Exception: ", e);
+                throw e;
+            }
 
             //then:
 
