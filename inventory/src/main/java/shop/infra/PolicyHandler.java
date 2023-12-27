@@ -2,8 +2,6 @@ package shop.infra;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import shop.config.kafka.KafkaProcessor;
 import shop.domain.*;
 
-//<<< Clean Arch / Inbound Adaptor
 @Service
 @Transactional
 public class PolicyHandler {
@@ -36,7 +33,7 @@ public class PolicyHandler {
         );
 
         // Sample Logic //
-        Inventory.updateInventory(event);
+        Inventory inventory = Inventory.updateInventory(event);
+        Assert.isTrue(inventory != null, "Inventory must exist");
     }
 }
-//>>> Clean Arch / Inbound Adaptor

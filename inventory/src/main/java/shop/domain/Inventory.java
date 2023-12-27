@@ -32,24 +32,25 @@ public class Inventory {
         return inventoryRepository;
     }
 
-    public static void updateInventory(OrderPlaced orderPlaced) {
-        repository()
-            .findById(orderPlaced.getProductId())
-            .ifPresent(inventory -> {
-                inventory.setStockRemain(
-                    (
-                        inventory.getStockRemain() != null
-                            ? inventory.getStockRemain()
-                            : 0
-                    ) -
-                    orderPlaced.getQty()
-                );
-                repository().save(inventory);
+    public static Inventory updateInventory(OrderPlaced orderPlaced) {
+        Optional<Inventory> optionalInventory = repository()
+            .findById(orderPlaced.getProductId());
+        if (!optionalInventory.isPresent()) return null;
 
-                InventoryUpdated inventoryUpdated = new InventoryUpdated(
-                    inventory
-                );
-                inventoryUpdated.publishAfterCommit();
-            });
+        Inventory inventory = optionalInventory.get();
+        inventory.setStockRemain(
+            (
+                inventory.getStockRemain() != null
+                    ? inventory.getStockRemain()
+                    : 0
+            ) -
+            orderPlaced.getQty()
+        );
+        repository().save(inventory);
+
+        InventoryUpdated inventoryUpdated = new InventoryUpdated(inventory);
+        inventoryUpdated.publishAfterCommit();
+
+        return inventory;
     }
 }
