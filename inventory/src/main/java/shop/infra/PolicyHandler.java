@@ -38,7 +38,7 @@ public class PolicyHandler {
             Inventory inventory = Inventory.updateInventory(event);
             Assert.isTrue(inventory != null, "Inventory must exist");
             InventoryUpdated inventoryUpdated = new InventoryUpdated(inventory);
-            inventoryUpdated.publishAfterCommit();
+            inventoryUpdated.publish();
         } catch (Exception e) {
             // exception handling
             System.out.println(
