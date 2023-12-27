@@ -1,7 +1,10 @@
 package shop.infra;
 
+import shop.OrderApplication;
+import shop.config.kafka.KafkaProcessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHeaders;
@@ -9,8 +12,6 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.MimeTypeUtils;
-import shop.OrderApplication;
-import shop.config.kafka.KafkaProcessor;
 
 //<<< Clean Arch / Outbound Adaptor
 public class AbstractEvent {
@@ -18,12 +19,12 @@ public class AbstractEvent {
     String eventType;
     Long timestamp;
 
-    public AbstractEvent(Object aggregate) {
+    public AbstractEvent(Object aggregate){
         this();
         BeanUtils.copyProperties(aggregate, this);
     }
 
-    public AbstractEvent() {
+    public AbstractEvent(){
         this.setEventType(this.getClass().getSimpleName());
         this.timestamp = System.currentTimeMillis();
     }
@@ -44,21 +45,25 @@ public class AbstractEvent {
                     MessageHeaders.CONTENT_TYPE,
                     MimeTypeUtils.APPLICATION_JSON
                 )
-                .setHeader("type", getEventType())
+                .setHeader(
+                    "type",
+                    getEventType()
+                )
                 .build()
         );
     }
 
-    public void publishAfterCommit() {
-        TransactionSynchronizationManager.registerSynchronization(
-            new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCompletion(int status) {
-                    AbstractEvent.this.publish();
-                }
+
+    public void publishAfterCommit(){
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+
+            @Override
+            public void afterCompletion(int status) {
+                AbstractEvent.this.publish();
             }
-        );
+        });
     }
+
 
     public String getEventType() {
         return eventType;
@@ -76,7 +81,7 @@ public class AbstractEvent {
         this.timestamp = timestamp;
     }
 
-    public boolean validate() {
+    public boolean validate(){
         return getEventType().equals(getClass().getSimpleName());
     }
 }

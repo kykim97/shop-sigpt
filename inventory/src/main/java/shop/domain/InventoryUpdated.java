@@ -1,10 +1,11 @@
 package shop.domain;
 
-import java.time.LocalDate;
-import java.util.*;
-import lombok.*;
 import shop.domain.*;
 import shop.infra.AbstractEvent;
+import java.util.*;
+import lombok.*;
+import java.time.LocalDate;
+
 
 //<<< DDD / Domain Event
 @Data
@@ -14,11 +15,10 @@ public class InventoryUpdated extends AbstractEvent {
     private Long productId;
     private Integer stockRemain;
 
-    public InventoryUpdated(Inventory aggregate) {
+    public InventoryUpdated(Inventory aggregate){
         super(aggregate);
     }
-
-    public InventoryUpdated() {
+    public InventoryUpdated(){
         super();
     }
 }
