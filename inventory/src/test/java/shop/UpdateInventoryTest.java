@@ -74,7 +74,10 @@ public class UpdateInventoryTest {
                 )
                 .setHeader("type", event.getEventType())
                 .build();
-            processor.inboundTopic().send(newMessage);
+            boolean sendStatus = processor.inboundTopic().send(newMessage);
+            if (!sendStatus) throw new RuntimeException(
+                "Failed to send message"
+            );
 
             //then:
 
