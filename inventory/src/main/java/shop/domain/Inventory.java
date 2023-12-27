@@ -5,6 +5,7 @@ import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import shop.domain.*;
+import shop.infra.AbstractEntity;
 
 public class Inventory extends AbstractEntity {
 
