@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import shop.config.kafka.KafkaProcessor;
 import shop.domain.*;
 
-//<<< Clean Arch / Inbound Adaptor
 @Service
 @Transactional
 public class PolicyHandler {
@@ -35,8 +34,7 @@ public class PolicyHandler {
             "\n\n##### listener UpdateInventory : " + orderPlaced + "\n\n"
         );
 
-        // Sample Logic //
-        Inventory.updateInventory(event);
+        Inventory inventory = new Inventory();
+        inventory.updateInventory(event);
     }
 }
-//>>> Clean Arch / Inbound Adaptor
