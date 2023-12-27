@@ -66,18 +66,15 @@ public class UpdateInventoryTest {
         try {
             String msg = objectMapper.writeValueAsString(event);
 
-            processor
-                .inboundTopic()
-                .send(
-                    MessageBuilder
-                        .withPayload(msg)
-                        .setHeader(
-                            MessageHeaders.CONTENT_TYPE,
-                            MimeTypeUtils.APPLICATION_JSON
-                        )
-                        .setHeader("type", event.getEventType())
-                        .build()
-                );
+            Message<String> newMessage = MessageBuilder
+                .withPayload(msg)
+                .setHeader(
+                    MessageHeaders.CONTENT_TYPE,
+                    MimeTypeUtils.APPLICATION_JSON
+                )
+                .setHeader("type", event.getEventType())
+                .build();
+            processor.inboundTopic().send(newMessage);
 
             //then:
 
