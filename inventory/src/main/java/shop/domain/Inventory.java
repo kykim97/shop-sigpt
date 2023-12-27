@@ -37,7 +37,12 @@ public class Inventory {
             .findById(orderPlaced.getProductId())
             .ifPresent(inventory -> {
                 inventory.setStockRemain(
-                    (int) (inventory.getStockRemain() - orderPlaced.getQty())
+                    (
+                        inventory.getStockRemain() != null
+                            ? inventory.getStockRemain()
+                            : 0
+                    ) -
+                    orderPlaced.getQty()
                 );
                 repository().save(inventory);
 
