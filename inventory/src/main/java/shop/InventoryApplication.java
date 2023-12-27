@@ -16,6 +16,7 @@ public class InventoryApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(InventoryApplication.class, args);
-        applicationContext = SpringApplication.run(InventoryApplication.class, args);
-
+        applicationContext =
+            SpringApplication.run(InventoryApplication.class, args);
+    }
 }
