@@ -11,4 +11,9 @@ public class OrderPlaced extends AbstractEvent {
 
     private Long productId;
     private Integer qty;
+
+    public void processInventoryUpdate() {
+        Inventory inventory = new Inventory();
+        inventory.updateInventory(this);
+    }
 }
